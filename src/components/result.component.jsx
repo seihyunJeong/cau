@@ -7,20 +7,16 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 
 const ResultComponent = (props) => {
     //const {id, institute, date, name, gender, birth, age, height, height_avg, weight, weight_avg, waist_length, waist_length_avg, flexibility, muscular_strength, quickness, agility, equilibrium, coordination, flexibility_std, muscular_strength_score, quickness_score, agility_score, equilibrium_score, coordination_score, flexibility_total_score, muscular_strength_total_score, quickness_total_score, agility_total_score, equilibrium_total_score, coordination_total_score, comment1, comment2, comment3} = state;
-    const userInformation = useSelector((state) => state.userInfo.userInfo);
+    // const userInformation = useSelector((state) => state.userInfo.userInfo);
     const [user, setUser] = useState()
-    const location = useLocation();
+    // const location = useLocation();
 
+    // init user with props
     useEffect(() => {
-      if(userInformation !== []){
-        let user_id = location.pathname.split('/')[2]
-        
-        setUser(userInformation.filter(user => user.id == user_id)[0])
-        console.log(user)
-        //console.log(user.institute)
-      }
-    }, [userInformation])
-    
+      console.log(props.state.user);
+      setUser(props.state.user); // props.data에 사용자 정보가 있다고 가정
+    }, [props]);
+
 
     const data = [
     {
@@ -124,19 +120,6 @@ const ResultComponent = (props) => {
     <Fragment>
       {user &&
       <div>
-        
-          {/* <div style={{display: 'flex',  justifyContent:'left', alignItems:'center'}}>
-            <button class='lezada-button lezada-button--medium' onClick={() => {
-              var printContents = document.getElementById('report').innerHTML;
-              var originalContents = document.body.innerHTML;
-              document.body.innerHTML = printContents;
-              window.print();
-              document.body.innerHTML = originalContents;
-              }}>PRINT</button>
-          </div> */}
-          
-          
-          
           <div id='report'>
             <div style={{backgroundColor: '#008feb'}}>
               <br/><br/>

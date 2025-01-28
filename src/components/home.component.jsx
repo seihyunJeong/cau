@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";  
-import { read, utils, writeFile } from 'xlsx';
+import { read, utils } from 'xlsx';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import {setUserInformation} from "../redux/userInfo"
@@ -10,31 +10,31 @@ const HomeComponent = () => {
     const userInformation = useSelector((state) => state.userInfo.userInfo);
 
     useEffect(() => {
-        if(userInformation != []){
+        if(userInformation && userInformation.length > 0){
             setUsers(userInformation)
           // console.log(user)
           // console.log(user.institute)
         }
       }, [userInformation])
 
-      function ExcelDateToJSDate(serial) {
-        var utc_days  = Math.floor(serial - 25569);
-        var utc_value = utc_days * 86400;                                        
-        var date_info = new Date(utc_value * 1000);
+    //   function ExcelDateToJSDate(serial) {
+    //     var utc_days  = Math.floor(serial - 25569);
+    //     var utc_value = utc_days * 86400;                                        
+    //     var date_info = new Date(utc_value * 1000);
         
-        var fractional_day = serial - Math.floor(serial) + 0.0000001;
+    //     var fractional_day = serial - Math.floor(serial) + 0.0000001;
      
-        var total_seconds = Math.floor(86400 * fractional_day);
+    //     var total_seconds = Math.floor(86400 * fractional_day);
      
-        var seconds = total_seconds % 60;
+    //     var seconds = total_seconds % 60;
      
-        total_seconds -= seconds;
+    //     total_seconds -= seconds;
      
-        var hours = Math.floor(total_seconds / (60 * 60));
-        var minutes = Math.floor(total_seconds / 60) % 60;
+    //     var hours = Math.floor(total_seconds / (60 * 60));
+    //     var minutes = Math.floor(total_seconds / 60) % 60;
      
-        return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
-     }
+    //     return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
+    //  }
     
     const handleImport = ($event) => {
         const files = $event.target.files;
@@ -101,6 +101,7 @@ const HomeComponent = () => {
                                 <th scope="col">평형성</th>
                                 <th scope="col">협응력</th>
                                 <th scope="col">결과지</th>
+                                <th scope="col">솔루션</th>
                             </tr>
                         </thead>
                         <tbody> 
@@ -125,6 +126,7 @@ const HomeComponent = () => {
                                             <td>{ user.agility }</td>
                                             <td>{ user.equilibrium }</td>
                                             <td>{ user.coordination }</td>
+                                            <td>{ user.solution_id_list }</td>
                                             <td>
                                                 <Link 
                                                     to={`/user/${user.id}`}
@@ -170,6 +172,16 @@ const HomeComponent = () => {
                                                     보기
                                                 </ Link>
                                             </td>
+                                            {/* <td>
+                                                <Link 
+                                                    to={`/solution/${user.id}`}
+                                                    state={{
+                                                        user: user
+                                                    }}
+                                                >
+                                                    솔루션
+                                                </ Link>
+                                            </td> */}
                                         </tr> 
                                     ))
                                     :
