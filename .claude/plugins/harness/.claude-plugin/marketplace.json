@@ -1,0 +1,16 @@
+{
+  "name": "harness-local",
+  "description": "Planner → Generator → Evaluator 하네스 플러그인",
+  "owner": {
+    "name": "Local"
+  },
+  "plugins": [
+    {
+      "name": "harness",
+      "source": "./plugins/harness",
+      "description": "기획 → 개발 → QA 스프린트 사이클을 sub-agent로 자동화하는 하네스 플러그인",
+      "version": "1.0.0",
+      "category": "workflow"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "name": "harness",
+  "description": "기획 → 개발 → QA 스프린트 사이클을 sub-agent로 자동화하는 하네스 플러그인. Planner(기획) → Generator(개발) → Evaluator(검증) 3단계 에이전트 구조.",
+  "version": "1.0.0"
+}
