@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/primary_cta_button.dart';
+import '../../../data/models/baby.dart';
+import '../../../providers/baby_providers.dart';
 import '../../../providers/core_providers.dart';
 import '../../../services/app_settings_service.dart';
+import '../../../services/notification_scheduler.dart';
+import '../../../services/notification_service.dart';
 
 /// 온보딩 화면 D: 알림 권한 화면.
 /// 개발기획서 5-1 화면 D 기준.
@@ -147,10 +150,32 @@ class NotificationPermissionScreen extends ConsumerWidget {
     final settings = ref.read(appSettingsServiceProvider);
 
     try {
-      // OS 알림 권한 요청
-      final status = await Permission.notification.request();
-      if (status.isGranted) {
+      // NotificationService를 통한 OS 알림 권한 요청
+      final granted = await NotificationService.requestPermission();
+
+      if (granted) {
         await settings.setDailyNotificationOn(true);
+        await settings.setRecordReminderOn(true);
+        await settings.setWeekTransitionOn(true);
+        await settings.setMilestoneOn(true);
+
+        // 기본 알림 3종 스케줄 등록
+        await NotificationScheduler.scheduleDailyMission(
+          time: settings.dailyNotificationTime,
+        );
+
+        // 아기 정보 기반 알림 스케줄 등록
+        final baby = ref.read(activeBabyProvider).value;
+        if (baby != null) {
+          await NotificationScheduler.scheduleWeekTransition(
+            birthDate: baby.birthDate,
+            weekLabel: baby.weekLabel,
+          );
+          await NotificationScheduler.scheduleAllMilestones(
+            birthDate: baby.birthDate,
+            babyName: baby.name,
+          );
+        }
       } else {
         // 거부 시에도 부정적 메시지 없이 진행
         await settings.setDailyNotificationOn(false);

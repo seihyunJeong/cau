@@ -5,10 +5,12 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/widgets/activity_type_chip.dart';
 import '../../../providers/activity_providers.dart';
 
 /// 활동 유형 필터 칩 행.
 /// 수평 스크롤 가능한 FilterChip 목록.
+/// 영역별 색상으로 선택 상태를 시각적으로 구분한다.
 class ActivityFilterChips extends ConsumerWidget {
   const ActivityFilterChips({super.key});
 
@@ -32,6 +34,14 @@ class ActivityFilterChips extends ConsumerWidget {
           final type = _filterTypes[index];
           final isSelected = selectedFilter == type;
 
+          // "전체" 필터는 warmOrange, 나머지는 영역별 색상 사용
+          final domainFg = type == AppStrings.activityFilterAll
+              ? AppColors.warmOrange
+              : ActivityTypeChip.domainColor(type);
+          final domainBg = type == AppStrings.activityFilterAll
+              ? AppColors.paleCream
+              : ActivityTypeChip.domainBgColor(type);
+
           return FilterChip(
             key: ValueKey('activity_filter_$type'),
             label: Text(type),
@@ -40,16 +50,16 @@ class ActivityFilterChips extends ConsumerWidget {
               ref.read(activityFilterProvider.notifier).setFilter(type);
             },
             backgroundColor: theme.cardColor,
-            selectedColor: AppColors.paleCream,
-            checkmarkColor: AppColors.warmOrange,
+            selectedColor: domainBg,
+            checkmarkColor: domainFg,
             labelStyle: theme.textTheme.labelSmall?.copyWith(
               color: isSelected
-                  ? AppColors.warmOrange
+                  ? domainFg
                   : theme.textTheme.bodySmall?.color,
             ),
             side: BorderSide(
               color: isSelected
-                  ? AppColors.warmOrange
+                  ? domainFg
                   : theme.dividerColor,
             ),
             shape: RoundedRectangleBorder(

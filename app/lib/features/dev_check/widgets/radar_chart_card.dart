@@ -11,7 +11,9 @@ import '../../../core/utils/score_calculator.dart';
 /// 레이더 차트 카드 위젯 (디자인컴포넌트 2-2-6, 2-5-1).
 /// 6영역 데이터를 200x200dp 레이더 차트로 시각화한다.
 /// 데이터 영역: radarFill(warmOrange 20% 불투명) 채움, warmOrange 2px 테두리.
-class RadarChartCard extends StatelessWidget {
+///
+/// Vitality 강화: 진입 시 0에서 실제 값으로 확장하는 애니메이션 (600ms, easeOutCubic).
+class RadarChartCard extends StatefulWidget {
   /// 영역별 점수 Map. key: domain ID, value: 0~12
   final Map<String, int> domainScores;
   final ValueKey<String>? chartKey;
@@ -22,29 +24,82 @@ class RadarChartCard extends StatelessWidget {
     this.chartKey,
   });
 
+  // Enlarged chart container to give labels more room.
+  static const double _chartContainerSize = 260.0;
+
+  @override
+  State<RadarChartCard> createState() => _RadarChartCardState();
+}
+
+class _RadarChartCardState extends State<RadarChartCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _expandAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    );
+    // Start animation after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _animController.forward();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant RadarChartCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Re-animate when data changes
+    if (widget.domainScores != oldWidget.domainScores) {
+      _animController.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      key: chartKey,
+      key: widget.chartKey,
       width: double.infinity,
       padding: const EdgeInsets.all(AppDimensions.base),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Center(
         child: SizedBox(
-          width: AppDimensions.radarChartSize,
-          height: AppDimensions.radarChartSize,
-          child: CustomPaint(
-            painter: _RadarChartPainter(
-              domainScores: domainScores,
-              isDark: isDark,
-            ),
-            child: _buildLabels(theme),
+          width: RadarChartCard._chartContainerSize,
+          height: RadarChartCard._chartContainerSize,
+          child: AnimatedBuilder(
+            animation: _expandAnimation,
+            builder: (context, child) {
+              return CustomPaint(
+                painter: _RadarChartPainter(
+                  domainScores: widget.domainScores,
+                  isDark: isDark,
+                  animationProgress: _expandAnimation.value,
+                ),
+                child: _buildLabels(theme),
+              );
+            },
           ),
         ),
       ),
@@ -53,26 +108,31 @@ class RadarChartCard extends StatelessWidget {
 
   Widget _buildLabels(ThemeData theme) {
     const labels = AppStrings.radarLabels;
-    // Position labels around the chart
+    final center = RadarChartCard._chartContainerSize / 2;
+    // Label radius: sits outside the chart polygon area with ample room.
+    final labelRadius = center - 10;
+
     return Stack(
+      clipBehavior: Clip.none,
       children: List.generate(6, (i) {
         final angle = -math.pi / 2 + (2 * math.pi / 6) * i;
-        // Offset from center (100, 100) with radius for labels
-        final labelRadius = 90.0;
-        final x = 100 + labelRadius * math.cos(angle);
-        final y = 100 + labelRadius * math.sin(angle);
+        final x = center + labelRadius * math.cos(angle);
+        final y = center + labelRadius * math.sin(angle);
 
         return Positioned(
-          left: x - 30,
+          left: x - 40,
           top: y - 10,
           child: SizedBox(
-            width: 60,
+            width: 80,
             child: Text(
               labels[i],
-              style: theme.textTheme.labelSmall,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontSize: 10,
+              ),
               textAlign: TextAlign.center,
               maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.visible,
+              softWrap: false,
             ),
           ),
         );
@@ -84,16 +144,18 @@ class RadarChartCard extends StatelessWidget {
 class _RadarChartPainter extends CustomPainter {
   final Map<String, int> domainScores;
   final bool isDark;
+  final double animationProgress;
 
   _RadarChartPainter({
     required this.domainScores,
     required this.isDark,
+    required this.animationProgress,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 30; // Leave room for labels
+    final radius = size.width / 2 - 50; // Leave ample room for labels
 
     // Draw grid circles
     final gridPaint = Paint()
@@ -116,12 +178,12 @@ class _RadarChartPainter extends CustomPainter {
       canvas.drawLine(center, end, gridPaint);
     }
 
-    // Draw data area
+    // Draw data area with animation progress
     final domains = ScoreCalculator.domains;
     final dataPath = Path();
     for (int i = 0; i < 6; i++) {
       final score = domainScores[domains[i]] ?? 0;
-      final fraction = score / 12.0; // 12 is max per domain
+      final fraction = (score / 12.0) * animationProgress;
       final angle = -math.pi / 2 + (2 * math.pi / 6) * i;
       final point = Offset(
         center.dx + radius * fraction * math.cos(angle),
@@ -154,7 +216,7 @@ class _RadarChartPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
     for (int i = 0; i < 6; i++) {
       final score = domainScores[domains[i]] ?? 0;
-      final fraction = score / 12.0;
+      final fraction = (score / 12.0) * animationProgress;
       final angle = -math.pi / 2 + (2 * math.pi / 6) * i;
       final point = Offset(
         center.dx + radius * fraction * math.cos(angle),
@@ -186,6 +248,7 @@ class _RadarChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _RadarChartPainter oldDelegate) {
     return domainScores != oldDelegate.domainScores ||
-        isDark != oldDelegate.isDark;
+        isDark != oldDelegate.isDark ||
+        animationProgress != oldDelegate.animationProgress;
   }
 }

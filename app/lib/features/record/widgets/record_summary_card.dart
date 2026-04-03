@@ -10,6 +10,7 @@ import '../../../data/models/daily_record.dart';
 
 /// 기록 요약 카드 -- 히스토리용 (디자인컴포넌트 2-2-4).
 /// 날짜 헤더 + 카드 내부에 수유/배변/수면/메모 표시.
+/// 각 기록 유형별 색상 배경 아이콘으로 시각적 구분을 강화한다.
 class RecordSummaryCard extends StatelessWidget {
   final DailyRecord record;
 
@@ -56,33 +57,37 @@ class RecordSummaryCard extends StatelessWidget {
             children: [
               _buildRow(
                 theme,
-                String.fromCharCode(0x1F37C),
-                AppStrings.feedingLabel,
-                '${record.feedingCount}${AppStrings.countSuffix}',
+                emoji: String.fromCharCode(0x1F37C),
+                label: AppStrings.feedingLabel,
+                value: '${record.feedingCount}${AppStrings.countSuffix}',
+                accentColor: AppColors.warmOrange,
               ),
-              _divider(theme),
+              _divider(),
               _buildRow(
                 theme,
-                String.fromCharCode(0x1F9F7),
-                AppStrings.diaperLabel,
-                '${record.diaperCount}${AppStrings.countSuffix}',
+                emoji: String.fromCharCode(0x1F9F7),
+                label: AppStrings.diaperLabel,
+                value: '${record.diaperCount}${AppStrings.countSuffix}',
+                accentColor: AppColors.softGreen,
               ),
               if (record.sleepHours != null) ...[
-                _divider(theme),
+                _divider(),
                 _buildRow(
                   theme,
-                  String.fromCharCode(0x1F4A4),
-                  AppStrings.sleepLabel,
-                  _formatSleep(record.sleepHours!),
+                  emoji: String.fromCharCode(0x1F4A4),
+                  label: AppStrings.sleepLabel,
+                  value: _formatSleep(record.sleepHours!),
+                  accentColor: AppColors.domainVision,
                 ),
               ],
               if (record.memo != null && record.memo!.isNotEmpty) ...[
-                _divider(theme),
+                _divider(),
                 _buildRow(
                   theme,
-                  String.fromCharCode(0x1F4DD),
-                  AppStrings.memoLabel.replaceAll(' (선택)', ''),
-                  record.memo!,
+                  emoji: String.fromCharCode(0x1F4DD),
+                  label: AppStrings.memoLabel.replaceAll(' (선택)', ''),
+                  value: record.memo!,
+                  accentColor: AppColors.warmGray,
                 ),
               ],
             ],
@@ -93,16 +98,32 @@ class RecordSummaryCard extends StatelessWidget {
   }
 
   Widget _buildRow(
-    ThemeData theme,
-    String emoji,
-    String label,
-    String value,
-  ) {
+    ThemeData theme, {
+    required String emoji,
+    required String label,
+    required String value,
+    required Color accentColor,
+  }) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppDimensions.xs),
       child: Row(
         children: [
-          Text(emoji),
+          // 색상 배경 이모지 아이콘
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: isDark ? 0.15 : 0.1),
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              emoji,
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
           const SizedBox(width: AppDimensions.sm),
           Text(
             label,
@@ -123,8 +144,8 @@ class RecordSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _divider(ThemeData theme) {
-    return Divider(
+  Widget _divider() {
+    return const Divider(
       height: 1,
       color: AppColors.lightBeige,
     );

@@ -47,28 +47,45 @@ class ObservationSummaryCard extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       key: const ValueKey('observation_summary_card'),
       width: double.infinity,
-      padding: const EdgeInsets.all(AppDimensions.lg),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.lg,
+        vertical: AppDimensions.xl,
+      ),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         key: const ValueKey('empty_observation_card'),
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.eco,
-            size: 48,
-            color: theme.colorScheme.secondary,
+          // Larger icon in tinted circle
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.warmOrange.withValues(alpha: isDark ? 0.12 : 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.eco,
+              size: 48,
+              color: AppColors.warmOrange.withValues(alpha: 0.7),
+            ),
           ),
-          const SizedBox(height: AppDimensions.md),
+          const SizedBox(height: AppDimensions.base),
           Text(
             AppStrings.emptyObservation,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.textTheme.bodySmall?.color,
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
@@ -92,6 +109,9 @@ class ObservationSummaryCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,6 +168,8 @@ class ObservationSummaryCard extends ConsumerWidget {
   }
 
   Widget _buildWithRadarData(BuildContext context, ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       key: const ValueKey('observation_summary_card'),
       width: double.infinity,
@@ -155,6 +177,9 @@ class ObservationSummaryCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,12 +206,12 @@ class ObservationSummaryCard extends ConsumerWidget {
           ),
           const SizedBox(height: AppDimensions.base),
 
-          // 레이더 차트 미니 (160x160)
+          // 레이더 차트 미니 (200x200) - enlarged to prevent label clipping
           Center(
             child: SizedBox(
               key: const ValueKey('radar_chart_mini'),
-              width: 160,
-              height: 160,
+              width: 200,
+              height: 200,
               child: CustomPaint(
                 painter: _RadarChartPainter(
                   scores: scores!,
@@ -195,8 +220,7 @@ class ObservationSummaryCard extends ConsumerWidget {
                   gridColor: theme.dividerColor,
                   labelColor:
                       theme.textTheme.bodySmall?.color ?? AppColors.warmGray,
-                  labelFontSize:
-                      theme.textTheme.labelSmall?.fontSize ?? 11,
+                  labelFontSize: 9,
                 ),
               ),
             ),
@@ -239,7 +263,7 @@ class _RadarChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 24;
+    final radius = size.width / 2 - 36; // More room for labels
     final sides = 6;
     final angle = 2 * math.pi / sides;
 
@@ -298,9 +322,9 @@ class _RadarChartPainter extends CustomPainter {
     canvas.drawPath(dataPath, fillPaint);
     canvas.drawPath(dataPath, strokePaint);
 
-    // 레이블 그리기
+    // 레이블 그리기 - use constrained layout to prevent clipping
     for (var i = 0; i < sides; i++) {
-      final labelRadius = radius + 16;
+      final labelRadius = radius + 18;
       final x = center.dx + labelRadius * math.cos(angle * i - math.pi / 2);
       final y = center.dy + labelRadius * math.sin(angle * i - math.pi / 2);
 
@@ -308,12 +332,12 @@ class _RadarChartPainter extends CustomPainter {
         text: TextSpan(
           text: AppStrings.radarLabels[i],
           style: TextStyle(
-            fontSize: labelFontSize,
+            fontSize: labelFontSize.clamp(0, 9),
             color: labelColor,
           ),
         ),
         textDirection: TextDirection.ltr,
-      )..layout();
+      )..layout(maxWidth: 80);
 
       textPainter.paint(
         canvas,

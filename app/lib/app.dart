@@ -6,6 +6,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/grandparent_theme.dart';
 import 'providers/core_providers.dart';
+import 'services/notification_service.dart';
 
 /// 앱 루트 위젯.
 /// MaterialApp.router + Riverpod ProviderScope 래핑. GoRouter + 테마 적용.
@@ -42,6 +43,9 @@ class HaruHanGajiApp extends ConsumerWidget {
 
     // GoRouter 생성 (isOnboardingComplete 기반 initialLocation)
     final router = ref.watch(goRouterProvider(settings));
+
+    // 알림 탭 시 라우팅을 위해 GoRouter 참조 설정
+    NotificationService.setRouter(router);
 
     return MaterialApp.router(
       title: AppStrings.appName,

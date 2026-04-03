@@ -109,6 +109,7 @@ class _SleepInputCardState extends State<SleepInputCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final hasSleep = widget.sleepHours != null && widget.sleepHours! > 0;
 
     return Container(
@@ -118,6 +119,9 @@ class _SleepInputCardState extends State<SleepInputCard> {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +132,7 @@ class _SleepInputCardState extends State<SleepInputCard> {
             style: theme.textTheme.headlineSmall,
           ),
           const SizedBox(height: AppDimensions.md),
-          // Sleep value tap area
+          // Sleep value tap area - improved with clock icon and better hint
           GestureDetector(
             onTap: _showTimePicker,
             child: Container(
@@ -140,19 +144,45 @@ class _SleepInputCardState extends State<SleepInputCard> {
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(color: AppColors.lightBeige),
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : AppColors.lightBeige,
+                ),
               ),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                hasSleep
-                    ? _formatSleepValue(widget.sleepHours!)
-                    : AppStrings.sleepPlaceholder,
-                key: const ValueKey('sleep_value'),
-                style: hasSleep
-                    ? theme.textTheme.bodyLarge
-                    : theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.mutedBeige,
-                      ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    size: 20,
+                    color: hasSleep
+                        ? AppColors.warmOrange
+                        : (isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.mutedBeige),
+                  ),
+                  const SizedBox(width: AppDimensions.sm),
+                  Expanded(
+                    child: Text(
+                      hasSleep
+                          ? _formatSleepValue(widget.sleepHours!)
+                          : AppStrings.sleepPlaceholderDetailed,
+                      key: const ValueKey('sleep_value'),
+                      style: hasSleep
+                          ? theme.textTheme.bodyLarge
+                          : theme.textTheme.bodyLarge?.copyWith(
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.mutedBeige,
+                            ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.mutedBeige,
+                  ),
+                ],
               ),
             ),
           ),

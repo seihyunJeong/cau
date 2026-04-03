@@ -159,14 +159,22 @@ class _GrowthExpansionTileState extends State<GrowthExpansionTile> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Dark mode: use cardColor consistently. Light mode: use paleCream when collapsed.
+    final collapsedBgColor = isDark ? theme.cardColor : AppColors.paleCream;
+    final headerTextColor = isDark ? AppColors.darkTextPrimary : AppColors.darkBrown;
 
     return AnimatedContainer(
       key: const ValueKey('growth_expansion_tile'),
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        color: _isExpanded ? theme.cardColor : AppColors.paleCream,
+        color: _isExpanded ? theme.cardColor : collapsedBgColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -186,7 +194,9 @@ class _GrowthExpansionTileState extends State<GrowthExpansionTile> {
                       _hasAnyData && !_isExpanded
                           ? _buildCompactSummary()
                           : AppStrings.growthAddLabel,
-                      style: theme.textTheme.headlineSmall,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: headerTextColor,
+                      ),
                     ),
                   ),
                   Icon(
@@ -313,11 +323,19 @@ class _GrowthExpansionTileState extends State<GrowthExpansionTile> {
             fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
-              borderSide: const BorderSide(color: AppColors.lightBeige),
+              borderSide: BorderSide(
+                color: theme.brightness == Brightness.dark
+                    ? AppColors.darkBorder
+                    : AppColors.lightBeige,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
-              borderSide: const BorderSide(color: AppColors.lightBeige),
+              borderSide: BorderSide(
+                color: theme.brightness == Brightness.dark
+                    ? AppColors.darkBorder
+                    : AppColors.lightBeige,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),

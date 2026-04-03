@@ -14,6 +14,7 @@ class AppSettingsService {
   static const _keyRecordReminderOn = 'isRecordReminderOn';
   static const _keyWeekTransitionOn = 'isWeekTransitionOn';
   static const _keyMilestoneOn = 'isMilestoneOn';
+  static const _keyRecordReminderTime = 'recordReminderTime';
   static const _keySilentMode = 'isSilentMode';
   static const _keyActiveBabyId = 'activeBabyId';
 
@@ -39,6 +40,9 @@ class AppSettingsService {
 
   bool get isRecordReminderOn =>
       _prefs.getBool(_keyRecordReminderOn) ?? true;
+
+  String get recordReminderTime =>
+      _prefs.getString(_keyRecordReminderTime) ?? '20:00';
 
   bool get isWeekTransitionOn =>
       _prefs.getBool(_keyWeekTransitionOn) ?? true;
@@ -68,6 +72,9 @@ class AppSettingsService {
 
   Future<void> setRecordReminderOn(bool value) =>
       _prefs.setBool(_keyRecordReminderOn, value);
+
+  Future<void> setRecordReminderTime(String value) =>
+      _prefs.setString(_keyRecordReminderTime, value);
 
   Future<void> setWeekTransitionOn(bool value) =>
       _prefs.setBool(_keyWeekTransitionOn, value);

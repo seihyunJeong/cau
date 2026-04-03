@@ -77,6 +77,8 @@ class _MemoInputCardState extends State<MemoInputCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       key: const ValueKey('memo_input_card'),
       width: double.infinity,
@@ -84,6 +86,9 @@ class _MemoInputCardState extends State<MemoInputCard> {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,17 +110,23 @@ class _MemoInputCardState extends State<MemoInputCard> {
             decoration: InputDecoration(
               hintText: AppStrings.memoPlaceholder,
               hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                color: AppColors.mutedBeige,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.mutedBeige,
               ),
               filled: true,
               fillColor: theme.colorScheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: const BorderSide(color: AppColors.lightBeige),
+                borderSide: BorderSide(
+                  color: isDark ? AppColors.darkBorder : AppColors.lightBeige,
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: const BorderSide(color: AppColors.lightBeige),
+                borderSide: BorderSide(
+                  color: isDark ? AppColors.darkBorder : AppColors.lightBeige,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),

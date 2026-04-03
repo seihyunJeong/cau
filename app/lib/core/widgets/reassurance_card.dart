@@ -27,14 +27,25 @@ class ReassuranceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Dark mode: use darkCard background with high-contrast text.
+    // Light mode: use mintTint background with darkBrown text.
+    final bgColor = isDark ? AppColors.darkCard : AppColors.mintTint;
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkBrown;
+    final subTextColor = isDark ? AppColors.darkTextSecondary : AppColors.warmGray;
+    final iconColor = AppColors.softGreen;
 
     return Container(
       key: cardKey,
       width: double.infinity,
       padding: const EdgeInsets.all(AppDimensions.lg),
       decoration: BoxDecoration(
-        color: AppColors.mintTint,
+        color: bgColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: isDark
+            ? Border.all(color: AppColors.softGreen.withValues(alpha: 0.3), width: 1)
+            : null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -42,13 +53,13 @@ class ReassuranceCard extends StatelessWidget {
           Icon(
             Icons.check_circle,
             size: AppDimensions.lg,
-            color: theme.colorScheme.secondary,
+            color: iconColor,
           ),
           const SizedBox(height: AppDimensions.sm),
           Text(
             message,
             style: theme.textTheme.headlineLarge?.copyWith(
-              color: theme.colorScheme.onSurface,
+              color: textColor,
             ),
             textAlign: TextAlign.center,
           ),
@@ -57,7 +68,7 @@ class ReassuranceCard extends StatelessWidget {
             Text(
               subMessage!,
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: AppColors.warmGray,
+                color: subTextColor,
               ),
               textAlign: TextAlign.center,
             ),

@@ -15,7 +15,7 @@ abstract class AppDimensions {
   static const double screenPaddingH = 16;
   static const double cardPadding = 16;
   static const double cardPaddingCompact = 12;
-  static const double sectionGap = 24;
+  static const double sectionGap = 32;
   static const double cardGap = 12;
 
   // ── 터치 영역 ──

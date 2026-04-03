@@ -86,7 +86,7 @@ class RecordMainScreen extends ConsumerWidget {
 
                 return Column(
                   children: [
-                    // Feeding counter
+                    // Feeding counter (warmOrange accent)
                     CounterCard(
                       label: AppStrings.feedingLabel,
                       emoji: String.fromCharCode(0x1F37C),
@@ -97,10 +97,11 @@ class RecordMainScreen extends ConsumerWidget {
                       countKey: const ValueKey('feeding_count'),
                       plusKey: const ValueKey('feeding_plus_btn'),
                       minusKey: const ValueKey('feeding_minus_btn'),
+                      accentColor: AppColors.warmOrange,
                     ),
                     const SizedBox(height: AppDimensions.cardGap),
 
-                    // Diaper counter
+                    // Diaper counter (softGreen accent for visual rhythm)
                     CounterCard(
                       label: AppStrings.diaperLabel,
                       emoji: String.fromCharCode(0x1F9F7),
@@ -111,6 +112,7 @@ class RecordMainScreen extends ConsumerWidget {
                       countKey: const ValueKey('diaper_count'),
                       plusKey: const ValueKey('diaper_plus_btn'),
                       minusKey: const ValueKey('diaper_minus_btn'),
+                      accentColor: AppColors.softGreen,
                     ),
                     const SizedBox(height: AppDimensions.cardGap),
 

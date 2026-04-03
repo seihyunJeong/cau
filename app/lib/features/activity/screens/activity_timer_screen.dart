@@ -330,8 +330,8 @@ class _TimerControls extends StatelessWidget {
   }
 }
 
-/// 개별 컨트롤 버튼.
-class _ControlButton extends StatelessWidget {
+/// 개별 컨트롤 버튼 (press 시 스케일 + 색상 피드백 포함).
+class _ControlButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback onTap;
   final ThemeData theme;
@@ -346,28 +346,89 @@ class _ControlButton extends StatelessWidget {
   });
 
   @override
+  State<_ControlButton> createState() => _ControlButtonState();
+}
+
+class _ControlButtonState extends State<_ControlButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pressController;
+  late Animation<double> _scaleAnimation;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(
+        parent: _pressController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pressController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final size = isPrimary ? 64.0 : AppDimensions.minTouchTarget;
-    final bgColor = isPrimary
-        ? theme.colorScheme.primary
-        : AppColors.paleCream;
-    final iconColor = isPrimary
-        ? theme.colorScheme.onPrimary
-        : theme.colorScheme.onSurface;
+    final size = widget.isPrimary ? 64.0 : AppDimensions.minTouchTarget;
+    final bgColor = widget.isPrimary
+        ? (_isPressed
+            ? widget.theme.colorScheme.primary.withValues(alpha: 0.85)
+            : widget.theme.colorScheme.primary)
+        : (_isPressed
+            ? AppColors.warmOrange.withValues(alpha: 0.15)
+            : AppColors.paleCream);
+    final iconColor = widget.isPrimary
+        ? widget.theme.colorScheme.onPrimary
+        : (_isPressed ? AppColors.warmOrange : widget.theme.colorScheme.onSurface);
 
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: bgColor,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: isPrimary ? 32 : 24,
+      onTapDown: (_) {
+        setState(() => _isPressed = true);
+        _pressController.forward();
+      },
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        _pressController.reverse();
+        widget.onTap();
+      },
+      onTapCancel: () {
+        setState(() => _isPressed = false);
+        _pressController.reverse();
+      },
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: bgColor,
+            shape: BoxShape.circle,
+            boxShadow: widget.isPrimary && !_isPressed
+                ? [
+                    BoxShadow(
+                      color: widget.theme.colorScheme.primary
+                          .withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Icon(
+            widget.icon,
+            color: iconColor,
+            size: widget.isPrimary ? 32 : 24,
+          ),
         ),
       ),
     );

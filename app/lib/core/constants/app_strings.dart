@@ -47,6 +47,7 @@ abstract class AppStrings {
   static const emptyRecord =
       '아직 기록이 없어요.\n기록 탭에서 첫 기록을 시작해보세요.';
   static const emptyGrowth = '아직 성장 기록이 없어요';
+  static const emptyGrowthSub = '기록 탭에서 체중, 키를 입력해보세요';
 
   // ── 오늘의 활동 관련 ──
   static const todayActivity = '오늘의 활동';
@@ -139,6 +140,7 @@ abstract class AppStrings {
   static const diaperLabel = '배변';
   static const sleepLabel = '수면';
   static const sleepPlaceholder = '탭해서 입력';
+  static const sleepPlaceholderDetailed = '탭해서 시간 선택 (예: 14시간 30분)';
   static String sleepValue(int hours, int minutes) => '${hours}시간 ${minutes}분';
   static const growthAddLabel = '성장 기록 추가하기 +';
   static String growthTodayCompact(String weight, String height) =>
@@ -191,12 +193,16 @@ abstract class AppStrings {
   static const activityFilterSensory = '감각';
   static const activityFilterSound = '소리';
   static const activityFilterVisual = '시각';
+  static const activityFilterTouch = '촉각';
+  static const activityFilterPosture = '자세';
   static const activityFilterTypes = [
     activityFilterAll,
     activityFilterHolding,
     activityFilterSensory,
     activityFilterSound,
     activityFilterVisual,
+    activityFilterTouch,
+    activityFilterPosture,
   ];
   static const activityEmptyWeek =
       '이 주차에는 아직 활동이 없어요.\n곧 준비될 거예요.';
@@ -372,6 +378,33 @@ abstract class AppStrings {
   // ── 면책 다이얼로그 ──
   static const disclaimerDialogTitle = '콘텐츠 출처 안내';
   static const disclaimerDialogClose = '닫기';
+
+  // ── 알림: 알림 메시지 텍스트 ──
+  static const notifDailyMissionTitle = '오늘의 활동';
+  static const notifDailyMissionDefaultBody = '오늘의 활동이 준비되었어요!';
+  static String notifDailyMissionBody(String activityName, String duration) =>
+      '$activityName ($duration)';
+  static const notifRecordReminderTitle = '하루 한 가지';
+  static const notifRecordReminderBody =
+      '오늘도 수고하셨어요. 간단히 기록해 볼까요?';
+  static const notifWeekTransitionTitle = '새로운 주차!';
+  static String notifWeekTransitionBody(String weekLabel) =>
+      '오늘부터 $weekLabel예요! 새로운 활동을 확인해 보세요.';
+  static const notifMilestoneTitle = '성장 마일스톤!';
+  static String notifMilestoneBody(String babyName, int days) =>
+      '$babyName가 태어난 지 ${days}일째!';
+
+  // ── 알림: 알림 설정 화면 텍스트 ──
+  static const notifSettingsTitle = '알림 설정';
+  static const notifDailyActivityLabel = '데일리 활동 알림';
+  static const notifDailyActivitySub = '"오늘의 활동" 알림';
+  static const notifDailyTimeLabel = '알림 시간';
+  static const notifRecordReminderLabel = '기록 리마인더';
+  static const notifRecordReminderSub = '오늘 기록을 아직 안 하셨을 때 알림';
+  static const notifWeekTransitionLabel = '주차 전환 알림';
+  static const notifWeekTransitionSub = '새로운 주차에 접어들면 알림';
+  static const notifMilestoneLabel = '성장 마일스톤 알림';
+  static const notifMilestoneSub = '"태어난 지 N일!"';
 
   // ── 주차/단위 접미사 ──
   /// 주차 레이블에 "차" 접미사를 붙인다. 예: "0-1주" -> "0-1주차"

@@ -81,6 +81,10 @@ ThemeData lightTheme() {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
+        side: const BorderSide(
+          color: AppColors.lightBeige,
+          width: 1,
+        ),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -197,6 +201,7 @@ ThemeData darkTheme() {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
+        side: const BorderSide(color: AppColors.darkBorder, width: 1),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(

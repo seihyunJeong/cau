@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_strings.dart';
@@ -138,36 +139,9 @@ class _StateAContent extends ConsumerWidget {
           style: theme.textTheme.headlineSmall,
         ),
         const SizedBox(height: AppDimensions.md),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(AppDimensions.base),
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: weekContent.keyPoints.map((point) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: AppDimensions.sm),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '\u2022 ',
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                    Expanded(
-                      child: Text(
-                        point,
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+        _KeyPointsCard(
+          theme: theme,
+          keyPoints: weekContent.keyPoints,
         ),
         const SizedBox(height: AppDimensions.sectionGap),
         // CTA 버튼
@@ -184,6 +158,57 @@ class _StateAContent extends ConsumerWidget {
           onPressed: () => context.push('/dev-check/trend'),
         ),
       ],
+    );
+  }
+}
+
+/// "이 시기 아기는..." 키 포인트 카드.
+class _KeyPointsCard extends StatelessWidget {
+  final ThemeData theme;
+  final List<String> keyPoints;
+
+  const _KeyPointsCard({
+    required this.theme,
+    required this.keyPoints,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppDimensions.base),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: keyPoints.map((point) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: AppDimensions.sm),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '\u2022 ',
+                  style: theme.textTheme.bodyLarge,
+                ),
+                Expanded(
+                  child: Text(
+                    point,
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }

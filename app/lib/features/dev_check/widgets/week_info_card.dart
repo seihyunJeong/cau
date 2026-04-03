@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_strings.dart';
@@ -23,6 +24,8 @@ class WeekInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
 
+    final isDark = themeData.brightness == Brightness.dark;
+
     return Container(
       key: cardKey,
       width: double.infinity,
@@ -30,6 +33,9 @@ class WeekInfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: themeData.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

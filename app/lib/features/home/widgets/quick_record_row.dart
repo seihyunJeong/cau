@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_strings.dart';
@@ -22,12 +23,17 @@ class QuickRecordRow extends ConsumerWidget {
     final feedingCount = recordAsync.value?.feedingCount ?? 0;
     final diaperCount = recordAsync.value?.diaperCount ?? 0;
 
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       key: const ValueKey('quick_record_row'),
       padding: const EdgeInsets.all(AppDimensions.cardPaddingCompact),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Row(
         children: [

@@ -11,6 +11,7 @@ import 'app.dart';
 import 'data/database/database_helper.dart';
 import 'providers/core_providers.dart';
 import 'services/app_settings_service.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   // ── 바인딩 초기화 ──
@@ -33,8 +34,8 @@ Future<void> main() async {
   // ── sqflite 데이터베이스 초기화 (싱글톤 -- 최초 접근 시 자동 생성) ──
   await DatabaseHelper.instance.database;
 
-  // ── 로컬 알림 초기화 (NotificationService는 이후 스프린트에서 구현) ──
-  // TODO: await NotificationService.initialize();
+  // ── 로컬 알림 초기화 ──
+  await NotificationService.initialize();
 
   runApp(
     ProviderScope(

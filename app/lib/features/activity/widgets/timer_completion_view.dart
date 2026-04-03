@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/widgets/primary_cta_button.dart';
 import '../../../data/seed/reassurance_messages.dart';
+import '../../../shared/widgets/confetti_animation.dart';
 
 /// 타이머 완료 축하 화면.
-/// Lottie 애니메이션 + "잘 하셨어요!" + 안심 메시지 + CTA 버튼.
+/// ConfettiAnimation (CustomPainter) + "잘 하셨어요!" + 안심 메시지 + CTA 버튼.
+/// Lottie placeholder를 실제 confetti 애니메이션으로 교체.
 class TimerCompletionView extends StatefulWidget {
   final VoidCallback onGoToObservation;
   final VoidCallback onGoHome;
@@ -23,14 +25,37 @@ class TimerCompletionView extends StatefulWidget {
   State<TimerCompletionView> createState() => _TimerCompletionViewState();
 }
 
-class _TimerCompletionViewState extends State<TimerCompletionView> {
+class _TimerCompletionViewState extends State<TimerCompletionView>
+    with SingleTickerProviderStateMixin {
   late final String _reassuranceMessage;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
     _reassuranceMessage =
         ReassuranceMessages.getRandomActivityCompleteMessage();
+
+    // Fade in the text content after confetti starts
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    );
+    // Delay slightly so confetti appears first
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _fadeController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,50 +72,46 @@ class _TimerCompletionViewState extends State<TimerCompletionView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Spacer(flex: 2),
-            // Lottie 애니메이션 (에셋이 없을 경우 플레이스홀더)
-            SizedBox(
-              key: const ValueKey('completion_lottie'),
-              width: 150,
-              height: 150,
-              child: _buildLottie(),
+            // Confetti animation (code-based, replaces Lottie placeholder)
+            const SizedBox(
+              key: ValueKey('completion_confetti'),
+              width: 180,
+              height: 180,
+              child: ConfettiAnimation(
+                width: 180,
+                height: 180,
+                duration: Duration(milliseconds: 2500),
+              ),
             ),
             const SizedBox(height: AppDimensions.lg),
-            // "잘 하셨어요!" 축하 메시지
-            Text(
-              AppStrings.completionCongrats,
-              style: textTheme.headlineLarge,
-              textAlign: TextAlign.center,
+            // "잘 하셨어요!" 축하 메시지 with fade-in
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: Text(
+                AppStrings.completionCongrats,
+                style: textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
             ),
             const SizedBox(height: AppDimensions.md),
-            // 안심 메시지
-            Text(
-              _reassuranceMessage,
-              key: const ValueKey('completion_reassurance_message'),
-              style: textTheme.bodyLarge?.copyWith(
-                color: theme.textTheme.bodySmall?.color,
+            // 안심 메시지 with fade-in
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: Text(
+                _reassuranceMessage,
+                key: const ValueKey('completion_reassurance_message'),
+                style: textTheme.bodyLarge?.copyWith(
+                  color: theme.textTheme.bodySmall?.color,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
             const Spacer(flex: 3),
             // "오늘 아기는 어땠나요? (관찰 기록하기)" CTA 버튼
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                key: const ValueKey('go_to_observation_button'),
-                onPressed: widget.onGoToObservation,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.xl),
-                  ),
-                ),
-                child: Text(
-                  AppStrings.goToObservation,
-                  style: textTheme.labelLarge,
-                ),
-              ),
+            PrimaryCtaButton(
+              label: AppStrings.goToObservation,
+              buttonKey: const ValueKey('go_to_observation_button'),
+              onPressed: widget.onGoToObservation,
             ),
             const SizedBox(height: AppDimensions.md),
             // "홈으로 돌아가기" 보조 버튼
@@ -122,21 +143,6 @@ class _TimerCompletionViewState extends State<TimerCompletionView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildLottie() {
-    // 먼저 Lottie 에셋을 시도하고, 없으면 플레이스홀더 아이콘을 표시한다.
-    return Lottie.asset(
-      'assets/lottie/celebration.json',
-      fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) {
-        return Icon(
-          Icons.celebration,
-          size: 100,
-          color: AppColors.warmOrange,
-        );
-      },
     );
   }
 }

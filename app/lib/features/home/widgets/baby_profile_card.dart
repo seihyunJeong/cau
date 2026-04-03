@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_strings.dart';
@@ -13,7 +14,8 @@ import '../../../providers/baby_providers.dart';
 /// 디자인컴포넌트 2-2-1 기준.
 /// - 좌측: CircleAvatar 40dp (프로필 이미지 또는 기본 아기 아이콘)
 /// - 우측: 이름 + 주차 (headlineSmall / H3), "태어난 지 N일째" (bodySmall / Caption)
-/// - 카드 배경: Theme cardColor, 모서리 12dp, 패딩 12dp (compact)
+/// - 카드 배경: 미묘한 그라데이션 배경 (cream -> paleCream)
+/// - 모서리 12dp, 패딩 12dp (compact)
 class BabyProfileCard extends ConsumerWidget {
   const BabyProfileCard({super.key});
 
@@ -22,13 +24,38 @@ class BabyProfileCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final babyAsync = ref.watch(activeBabyProvider);
 
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       key: const ValueKey('baby_profile_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppDimensions.cardPaddingCompact),
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        // Subtle gradient background for visual warmth
+        gradient: isDark
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.darkCard,
+                  AppColors.darkCard.withValues(alpha: 0.85),
+                ],
+              )
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.cream,
+                  AppColors.paleCream,
+                ],
+              ),
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : Border.all(
+                color: AppColors.warmOrange.withValues(alpha: 0.08),
+                width: 1,
+              ),
       ),
       child: babyAsync.when(
         data: (baby) {

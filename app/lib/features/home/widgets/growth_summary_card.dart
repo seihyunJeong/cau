@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_strings.dart';
@@ -19,6 +20,8 @@ class GrowthSummaryCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final growthAsync = ref.watch(latestGrowthProvider);
 
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       key: const ValueKey('growth_summary_card'),
       width: double.infinity,
@@ -26,6 +29,9 @@ class GrowthSummaryCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: growthAsync.when(
         data: (growth) {
@@ -98,19 +104,36 @@ class GrowthSummaryCard extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       children: [
-        Icon(
-          Icons.straighten,
-          size: 36,
-          color: theme.textTheme.bodySmall?.color,
+        // Larger icon in a tinted circle for visual emphasis
+        Container(
+          width: 72,
+          height: 72,
+          decoration: BoxDecoration(
+            color: AppColors.warmOrange.withValues(alpha: isDark ? 0.12 : 0.08),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.straighten,
+            size: 36,
+            color: AppColors.warmOrange.withValues(alpha: 0.7),
+          ),
         ),
-        const SizedBox(height: AppDimensions.sm),
+        const SizedBox(height: AppDimensions.md),
         Text(
           AppStrings.emptyGrowth,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.textTheme.bodySmall?.color,
+            fontWeight: FontWeight.w500,
           ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppDimensions.xs),
+        Text(
+          AppStrings.emptyGrowthSub,
+          style: theme.textTheme.bodySmall,
           textAlign: TextAlign.center,
         ),
       ],

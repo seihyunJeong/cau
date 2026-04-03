@@ -5,6 +5,7 @@ class ObservationReflexData {
 
   /// 항목 ID -> 전문 용어명 매핑.
   static const _termNameMapping = <String, String>{
+    // 0-1주차 2단계 관찰 항목
     'obs_s2_moro': '모로반사 (Moro Reflex)',
     'obs_s2_rooting': '탐색반사 (Rooting Reflex)',
     'obs_s2_palmar': '파악반사 (Palmar Grasp Reflex)',
@@ -12,10 +13,20 @@ class ObservationReflexData {
     'obs_s2_stepping': '보행반사 (Stepping Reflex)',
     'obs_s2_suck': '빨기반사 (Sucking Reflex)',
     'obs_s2_tonic': '긴장목반사 (Tonic Neck Reflex)',
+    // 2-3주차 2단계 관찰 항목 추가
+    'w1_obs_s2_moro': '모로반사 (Moro Reflex)',
+    'w1_obs_s2_rooting': '탐색반사 (Rooting Reflex)',
+    'w1_obs_s2_palmar': '파악반사 (Palmar Grasp Reflex)',
+    'w1_obs_s2_visual': '시각적 주의 반응 (Visual Attention)',
+    'w1_obs_s2_auditory': '청각-사회적 반응 (Auditory-Social Response)',
+    'w1_obs_s2_posture': '자세 후 안정 반응 (Postural Settling)',
+    'w1_obs_s2_plantar': '하지 반응 (Lower Limb Response)',
+    'w1_obs_s2_tonic': '긴장목반사 (Tonic Neck Reflex)',
   };
 
   /// 항목 ID -> 설명 매핑.
   static const _descriptionMapping = <String, String>{
+    // 0-1주차 2단계 관찰 항목
     'obs_s2_moro':
         '갑작스러운 소리나 움직임에 놀라 양팔을 벌렸다가 모으는 자연스러운 반응이에요. '
             '생후 3-4개월에 자연스럽게 사라져요.',
@@ -35,6 +46,31 @@ class ObservationReflexData {
         '입에 무언가가 닿으면 반사적으로 빠는 반응이에요. '
             '수유와 직결되는 중요한 반사로, 생후 3-4개월에 자발적 빨기로 전환돼요.',
     'obs_s2_tonic':
+        '고개를 한쪽으로 돌리면 같은 쪽 팔다리를 펴고 반대쪽은 구부리는 반응이에요. '
+            '생후 5-7개월에 자연스럽게 사라져요.',
+    // 2-3주차 2단계 관찰 항목 추가
+    'w1_obs_s2_moro':
+        '갑작스러운 소리나 움직임에 놀라 양팔을 벌렸다가 모으는 자연스러운 반응이에요. '
+            '생후 3-4개월에 자연스럽게 사라져요.',
+    'w1_obs_s2_rooting':
+        '입 주변을 건드리면 그 방향으로 고개를 돌리고 입을 벌리는 반응이에요. '
+            '먹기 위한 본능적인 반사로, 생후 3-4개월에 줄어들어요.',
+    'w1_obs_s2_palmar':
+        '손바닥에 무언가가 닿으면 반사적으로 꽉 쥐는 반응이에요. '
+            '생후 5-6개월에 점차 줄어들어요.',
+    'w1_obs_s2_visual':
+        '가까운 거리에서 얼굴이나 밝은 대비 자극에 시선이 잠깐 머무는 반응이에요. '
+            '2-3주부터 조금씩 더 또렷해질 수 있어요.',
+    'w1_obs_s2_auditory':
+        '보호자의 목소리를 듣고 표정이나 몸 움직임이 잠깐 달라지는 반응이에요. '
+            '소통의 시작이에요.',
+    'w1_obs_s2_posture':
+        '안기거나 자세가 바뀐 뒤 몸의 긴장이 풀리며 안정되는 반응이에요. '
+            '어느 자세에서 더 편안한지 관찰해 보세요.',
+    'w1_obs_s2_plantar':
+        '발바닥이나 다리 자극에 반응하여 다리를 움직이는 반응이에요. '
+            '좌우 차이를 가볍게 살펴봐도 좋아요.',
+    'w1_obs_s2_tonic':
         '고개를 한쪽으로 돌리면 같은 쪽 팔다리를 펴고 반대쪽은 구부리는 반응이에요. '
             '생후 5-7개월에 자연스럽게 사라져요.',
   };

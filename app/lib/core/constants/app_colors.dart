@@ -23,6 +23,27 @@ abstract class AppColors {
   static const radarFill = Color(0x33F5A623);
   static const growthBand = Color(0x337BC67E);
 
+  // ── 활동 영역 컬러 ──
+  // 6개 발달 영역별 시맨틱 컬러. 기존 warmOrange 톤과 조화로운 파스텔/소프트 톤.
+  static const domainHolding = Color(0xFFE8A0BF);   // 안기 -- 따뜻한 로즈핑크
+  static const domainSensory = Color(0xFF7BC67E);    // 감각 -- 소프트 그린
+  static const domainSound = Color(0xFF7EB8DA);      // 소리 -- 소프트 스카이블루
+  static const domainVision = Color(0xFFB49ADB);     // 시각 -- 소프트 라벤더
+  static const domainTouch = Color(0xFFF5A623);      // 촉각 -- warmOrange 유지
+  static const domainBalance = Color(0xFFE8C86A);    // 자세/균형 -- 소프트 골드
+
+  // 각 영역의 연한 배경 (칩/카드용)
+  static const domainHoldingBg = Color(0xFFFCF0F5);
+  static const domainSensoryBg = Color(0xFFF0F9F0);
+  static const domainSoundBg = Color(0xFFF0F5FA);
+  static const domainVisionBg = Color(0xFFF5F0FA);
+  static const domainTouchBg = Color(0xFFFFF3E8);
+  static const domainBalanceBg = Color(0xFFFFF8E8);
+
+  // ── 상태 컬러 (시맨틱) ──
+  static const info = Color(0xFF7EB8DA);          // 정보 -- 소프트 블루
+  static const infoBg = Color(0xFFF0F5FA);        // 정보 배경
+
   // 별칭 (확장 컬러와 동일 값)
   static const navWhite = white;
   static const tooltipCream = cream;
