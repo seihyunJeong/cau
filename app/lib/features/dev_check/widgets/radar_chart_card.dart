@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/score_calculator.dart';
 
@@ -12,7 +13,7 @@ import '../../../core/utils/score_calculator.dart';
 /// 6영역 데이터를 200x200dp 레이더 차트로 시각화한다.
 /// 데이터 영역: radarFill(warmOrange 20% 불투명) 채움, warmOrange 2px 테두리.
 ///
-/// Vitality 강화: 진입 시 0에서 실제 값으로 확장하는 애니메이션 (600ms, easeOutCubic).
+/// Vitality 강화: 진입 시 0에서 실제 값으로 확장하는 애니메이션 (800ms, easeOutCubic).
 class RadarChartCard extends StatefulWidget {
   /// 영역별 점수 Map. key: domain ID, value: 0~12
   final Map<String, int> domainScores;
@@ -41,7 +42,7 @@ class _RadarChartCardState extends State<RadarChartCard>
     super.initState();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 800),
     );
     _expandAnimation = CurvedAnimation(
       parent: _animController,
@@ -80,6 +81,7 @@ class _RadarChartCardState extends State<RadarChartCard>
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveLow(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,

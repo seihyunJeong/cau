@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
 import '../constants/app_radius.dart';
+import '../constants/app_shadows.dart';
 
 /// 빈 상태 카드 (2-2-8).
 /// 데이터가 없을 때 표시하는 재사용 가능한 빈 상태 위젯.
@@ -38,6 +39,7 @@ class EmptyStateCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveSubtle(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,

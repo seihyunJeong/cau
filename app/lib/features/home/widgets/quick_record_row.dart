@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/saved_toast.dart';
 import '../../../providers/record_providers.dart';
@@ -25,12 +26,30 @@ class QuickRecordRow extends ConsumerWidget {
 
     final isDark = theme.brightness == Brightness.dark;
 
+    // 액션 카드: 그라데이션 배경 + 적응형 그림자
     return Container(
       key: const ValueKey('quick_record_row'),
       padding: const EdgeInsets.all(AppDimensions.cardPaddingCompact),
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        gradient: isDark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.darkCard,
+                  AppColors.darkCardElevated,
+                ],
+              )
+            : LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.cardColor,
+                  AppColors.paleCream,
+                ],
+              ),
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveSubtle(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,

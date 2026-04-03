@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../data/models/baby.dart';
 import '../../../providers/baby_providers.dart';
@@ -50,6 +51,7 @@ class BabyProfileCard extends ConsumerWidget {
                 ],
               ),
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveSubtle(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : Border.all(

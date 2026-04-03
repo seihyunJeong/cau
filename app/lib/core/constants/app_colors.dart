@@ -49,9 +49,12 @@ abstract class AppColors {
   static const tooltipCream = cream;
 
   // ── 다크 모드 ──
-  static const darkBg = Color(0xFF1A1512);
-  static const darkCard = Color(0xFF2A231D);
-  static const darkBorder = Color(0xFF3D3027);
+  // darkBg와 darkCard의 명도 차이를 ~20%로 확대하여 카드-배경 구분을 명확히 한다.
+  // 기존 darkBg(#1A1512) → 더 어두운 #121010, darkCard(#2A231D) → 더 밝은 #342B23
+  static const darkBg = Color(0xFF121010);
+  static const darkCard = Color(0xFF342B23);
+  static const darkCardElevated = Color(0xFF3D3328);
+  static const darkBorder = Color(0xFF4A3D32);
   static const darkTextPrimary = Color(0xFFF5EDE3);
   static const darkTextSecondary = Color(0xFFA89888);
 }

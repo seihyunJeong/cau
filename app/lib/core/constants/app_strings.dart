@@ -242,7 +242,9 @@ abstract class AppStrings {
 
   // ── 활동 히스토리 ──
   static const activityHistoryTitle = '활동 히스토리';
-  static const activityHistoryPlaceholder = '활동 히스토리 화면은 곧 준비될 거예요.';
+  static const activityHistoryEmpty = '아직 완료한 활동이 없어요';
+  static const activityHistoryTimerUsed = '타이머 사용';
+  static const activityHistoryNoTimer = '타이머 미사용';
 
   // ── 관찰 기록 폼 ──
   static const observationReassuranceHint =

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
 import '../constants/app_radius.dart';
+import '../constants/app_shadows.dart';
 
 /// 안심 메시지 카드 (디자인컴포넌트 2-2-7).
 /// 성장 곡선, 관찰 결과 등에서 안심을 주는 메시지를 표시한다.
@@ -43,6 +44,7 @@ class ReassuranceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
+        boxShadow: AppShadows.adaptiveSubtle(isDark),
         border: isDark
             ? Border.all(color: AppColors.softGreen.withValues(alpha: 0.3), width: 1)
             : null,

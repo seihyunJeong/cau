@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_strings.dart';
 
 /// 주차 정보 카드 위젯 (디자인컴포넌트 2-2-12).
@@ -33,6 +34,7 @@ class WeekInfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: themeData.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
+        boxShadow: AppShadows.adaptiveLow(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,

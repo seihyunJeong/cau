@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_strings.dart';
@@ -13,6 +11,7 @@ import '../../../providers/core_providers.dart';
 import '../../../services/app_settings_service.dart';
 import '../../../services/notification_scheduler.dart';
 import '../../../services/notification_service.dart';
+import '../../../shared/widgets/bell_animation.dart';
 
 /// 온보딩 화면 D: 알림 권한 화면.
 /// 개발기획서 5-1 화면 D 기준.
@@ -37,7 +36,7 @@ class NotificationPermissionScreen extends ConsumerWidget {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              // -- Lottie 벨 애니메이션 --
+              // -- 벨 애니메이션 (CustomPainter 기반) --
               _buildBellAnimation(theme.brightness == Brightness.dark),
               const SizedBox(height: AppDimensions.xl),
               // -- 제목 --
@@ -83,27 +82,20 @@ class NotificationPermissionScreen extends ConsumerWidget {
   }
 
   Widget _buildBellAnimation(bool isDark) {
-    return SizedBox(
+    // CustomPainter 기반 BellAnimation으로 Lottie placeholder를 대체.
+    return Container(
       width: 150,
       height: 150,
-      child: Lottie.asset(
-        'assets/lottie/notification_bell.json',
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkCard : AppColors.paleCream,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.notifications_active_outlined,
-              size: 64,
-              color: AppColors.warmOrange,
-            ),
-          );
-        },
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : AppColors.paleCream,
+        shape: BoxShape.circle,
+      ),
+      child: const Center(
+        child: BellAnimation(
+          size: 72,
+          autoPlay: true,
+          duration: Duration(milliseconds: 1500),
+        ),
       ),
     );
   }

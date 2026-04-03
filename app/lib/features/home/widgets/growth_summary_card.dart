@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/text_link_button.dart';
 import '../../../providers/growth_providers.dart';
@@ -22,29 +23,54 @@ class GrowthSummaryCard extends ConsumerWidget {
 
     final isDark = theme.brightness == Brightness.dark;
 
+    // 정보 카드: 좌측 색상 바 + 컴팩트 패딩 + 적응형 그림자
     return Container(
       key: const ValueKey('growth_summary_card'),
       width: double.infinity,
-      padding: const EdgeInsets.all(AppDimensions.cardPadding),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveLow(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,
       ),
-      child: growthAsync.when(
-        data: (growth) {
-          if (growth == null) {
-            return _buildEmptyState(theme);
-          }
-          return _buildContent(context, theme, growth);
-        },
-        loading: () => const SizedBox(
-          height: 60,
-          child: Center(child: CircularProgressIndicator()),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 좌측 색상 바 (정보 카드 스타일)
+            Container(
+              width: 4,
+              decoration: BoxDecoration(
+                color: AppColors.softGreen,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(AppRadius.md),
+                  bottomLeft: Radius.circular(AppRadius.md),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.cardPaddingCompact),
+                child: growthAsync.when(
+                  data: (growth) {
+                    if (growth == null) {
+                      return _buildEmptyState(theme);
+                    }
+                    return _buildContent(context, theme, growth);
+                  },
+                  loading: () => const SizedBox(
+                    height: 60,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (_, _) => _buildEmptyState(theme),
+                ),
+              ),
+            ),
+          ],
         ),
-        error: (_, _) => _buildEmptyState(theme),
       ),
     );
   }

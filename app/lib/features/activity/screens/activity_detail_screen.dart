@@ -115,7 +115,8 @@ class ActivityDetailScreen extends ConsumerWidget {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: theme.cardColor,
-          boxShadow: AppShadows.high,
+          boxShadow: AppShadows.adaptiveHigh(
+              theme.brightness == Brightness.dark),
         ),
         child: SafeArea(
           child: Padding(

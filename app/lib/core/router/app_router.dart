@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_strings.dart';
 import '../../features/activity/screens/activity_detail_screen.dart';
+import '../../features/activity/screens/activity_history_screen.dart';
 import '../../features/activity/screens/activity_timer_screen.dart';
 import '../../features/activity/screens/observation_form_screen.dart';
 import '../../features/activity/screens/observation_result_screen.dart';
@@ -97,7 +97,7 @@ final goRouterProvider = Provider.family<GoRouter, AppSettingsService>(
           path: '/activity/history',
           pageBuilder: (context, state) => _slideTransitionPage(
             key: state.pageKey,
-            child: const _ActivityHistoryPlaceholder(),
+            child: const ActivityHistoryScreen(),
           ),
         ),
         GoRoute(
@@ -306,24 +306,3 @@ CustomTransitionPage<void> _scaleTransitionPage({
   );
 }
 
-/// 활동 히스토리 플레이스홀더 화면.
-/// 실제 구현은 이후 스프린트에서 진행한다.
-class _ActivityHistoryPlaceholder extends StatelessWidget {
-  const _ActivityHistoryPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppStrings.activityHistoryTitle),
-      ),
-      body: Center(
-        child: Text(
-          AppStrings.activityHistoryPlaceholder,
-          style: Theme.of(context).textTheme.bodyLarge,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-}

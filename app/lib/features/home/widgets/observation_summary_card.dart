@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_radius.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/observation_interpreter.dart';
 import '../../../core/widgets/text_link_button.dart';
@@ -59,6 +60,7 @@ class ObservationSummaryCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveSubtle(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,
@@ -102,67 +104,92 @@ class ObservationSummaryCard extends ConsumerWidget {
     final icon = ObservationInterpreter.getIcon(level);
     final iconColor = ObservationInterpreter.getIconColor(level);
 
+    // 정보 카드: 좌측 색상 바 + 적응형 그림자
     return Container(
       key: const ValueKey('observation_summary_card'),
       width: double.infinity,
-      padding: const EdgeInsets.all(AppDimensions.cardPadding),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveLow(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 안심 메시지
-          Row(
-            children: [
-              Icon(
-                icon,
-                size: 20,
-                color: iconColor,
-              ),
-              const SizedBox(width: AppDimensions.sm),
-              Expanded(
-                child: Text(
-                  AppStrings.observationReassurance,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.secondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 좌측 색상 바 (정보 카드 스타일)
+            Container(
+              width: 4,
+              decoration: const BoxDecoration(
+                color: AppColors.domainVision,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(AppRadius.md),
+                  bottomLeft: Radius.circular(AppRadius.md),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: AppDimensions.md),
-          // 해석 결과 메시지
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppDimensions.md),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkBg : AppColors.mintTint,
-              borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
-            child: Text(
-              message,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.cardPaddingCompact),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 안심 메시지
+                    Row(
+                      children: [
+                        Icon(
+                          icon,
+                          size: 20,
+                          color: iconColor,
+                        ),
+                        const SizedBox(width: AppDimensions.sm),
+                        Expanded(
+                          child: Text(
+                            AppStrings.observationReassurance,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.secondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.md),
+                    // 해석 결과 메시지
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppDimensions.md),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkBg : AppColors.mintTint,
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                      child: Text(
+                        message,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.sm),
+                    // 더보기 링크
+                    TextLinkButton(
+                      label: AppStrings.moreLink,
+                      buttonKey: const ValueKey('observation_more_link'),
+                      onPressed: () {
+                        // TODO: 발달 체크 상세 화면 네비게이션
+                      },
+                    ),
+                  ],
+                ),
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
-          const SizedBox(height: AppDimensions.sm),
-          // 더보기 링크
-          TextLinkButton(
-            label: AppStrings.moreLink,
-            buttonKey: const ValueKey('observation_more_link'),
-            onPressed: () {
-              // TODO: 발달 체크 상세 화면 네비게이션
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -170,72 +197,97 @@ class ObservationSummaryCard extends ConsumerWidget {
   Widget _buildWithRadarData(BuildContext context, ThemeData theme) {
     final isDark = theme.brightness == Brightness.dark;
 
+    // 정보 카드: 좌측 색상 바 + 적응형 그림자
     return Container(
       key: const ValueKey('observation_summary_card'),
       width: double.infinity,
-      padding: const EdgeInsets.all(AppDimensions.cardPadding),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: AppShadows.adaptiveLow(isDark),
         border: isDark
             ? Border.all(color: AppColors.darkBorder, width: 1)
             : null,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 안심 메시지
-          Row(
-            children: [
-              Icon(
-                Icons.check_circle,
-                size: 20,
-                color: theme.colorScheme.secondary,
-              ),
-              const SizedBox(width: AppDimensions.sm),
-              Expanded(
-                child: Text(
-                  AppStrings.observationReassurance,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.secondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDimensions.base),
-
-          // 레이더 차트 미니 (200x200) - enlarged to prevent label clipping
-          Center(
-            child: SizedBox(
-              key: const ValueKey('radar_chart_mini'),
-              width: 200,
-              height: 200,
-              child: CustomPaint(
-                painter: _RadarChartPainter(
-                  scores: scores!,
-                  fillColor: AppColors.radarFill,
-                  strokeColor: AppColors.warmOrange,
-                  gridColor: theme.dividerColor,
-                  labelColor:
-                      theme.textTheme.bodySmall?.color ?? AppColors.warmGray,
-                  labelFontSize: 9,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 좌측 색상 바 (정보 카드 스타일)
+            Container(
+              width: 4,
+              decoration: const BoxDecoration(
+                color: AppColors.domainVision,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(AppRadius.md),
+                  bottomLeft: Radius.circular(AppRadius.md),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: AppDimensions.sm),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.cardPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 안심 메시지
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          size: 20,
+                          color: theme.colorScheme.secondary,
+                        ),
+                        const SizedBox(width: AppDimensions.sm),
+                        Expanded(
+                          child: Text(
+                            AppStrings.observationReassurance,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.secondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.base),
 
-          // 더보기 링크
-          TextLinkButton(
-            label: AppStrings.moreLink,
-            buttonKey: const ValueKey('observation_more_link'),
-            onPressed: () {
-              // TODO: 발달 체크 상세 화면 네비게이션
-            },
-          ),
-        ],
+                    // 레이더 차트 미니 (200x200)
+                    Center(
+                      child: SizedBox(
+                        key: const ValueKey('radar_chart_mini'),
+                        width: 200,
+                        height: 200,
+                        child: CustomPaint(
+                          painter: _RadarChartPainter(
+                            scores: scores!,
+                            fillColor: AppColors.radarFill,
+                            strokeColor: AppColors.warmOrange,
+                            gridColor: theme.dividerColor,
+                            labelColor: theme.textTheme.bodySmall?.color ??
+                                AppColors.warmGray,
+                            labelFontSize: 9,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.sm),
+
+                    // 더보기 링크
+                    TextLinkButton(
+                      label: AppStrings.moreLink,
+                      buttonKey: const ValueKey('observation_more_link'),
+                      onPressed: () {
+                        // TODO: 발달 체크 상세 화면 네비게이션
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -30,6 +30,7 @@ class ActivityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
+    final isDark = theme.brightness == Brightness.dark;
     final accentColor = ActivityTypeChip.domainColor(activity.type);
 
     return GestureDetector(
@@ -43,7 +44,10 @@ class ActivityCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(AppRadius.md),
-          boxShadow: AppShadows.low,
+          boxShadow: AppShadows.adaptiveLow(isDark),
+          border: isDark
+              ? Border.all(color: AppColors.darkBorder, width: 1)
+              : null,
         ),
         child: IntrinsicHeight(
           child: Row(

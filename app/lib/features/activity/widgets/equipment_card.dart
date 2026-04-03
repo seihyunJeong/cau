@@ -20,6 +20,8 @@ class EquipmentCard extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       key: const ValueKey('equipment_card'),
       width: double.infinity,
@@ -27,7 +29,10 @@ class EquipmentCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        boxShadow: AppShadows.low,
+        boxShadow: AppShadows.adaptiveLow(isDark),
+        border: isDark
+            ? Border.all(color: AppColors.darkBorder, width: 1)
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

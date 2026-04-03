@@ -216,11 +216,12 @@ class _MyScreenState extends ConsumerState<MyScreen> {
                 key: const ValueKey('dark_mode_switch'),
                 icon: Icons.dark_mode_outlined,
                 title: AppStrings.darkMode,
-                value: settings.themeMode == 'dark',
+                value: ref.watch(themeModeProvider) == 'dark',
                 onChanged: (v) async {
                   HapticFeedback.lightImpact();
-                  await settings.setThemeMode(v ? 'dark' : 'light');
-                  ref.invalidate(appSettingsServiceProvider);
+                  final mode = v ? 'dark' : 'light';
+                  await settings.setThemeMode(mode);
+                  ref.read(themeModeProvider.notifier).update(mode);
                 },
                 theme: theme,
                 isDark: isDark,
@@ -231,11 +232,11 @@ class _MyScreenState extends ConsumerState<MyScreen> {
                 icon: Icons.text_increase_outlined,
                 title: AppStrings.grandparentMode,
                 subtitle: AppStrings.grandparentModeSub,
-                value: settings.isGrandparentMode,
+                value: ref.watch(grandparentModeProvider),
                 onChanged: (v) async {
                   HapticFeedback.lightImpact();
                   await settings.setGrandparentMode(v);
-                  ref.invalidate(appSettingsServiceProvider);
+                  ref.read(grandparentModeProvider.notifier).update(v);
                 },
                 theme: theme,
                 isDark: isDark,

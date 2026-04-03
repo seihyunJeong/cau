@@ -15,10 +15,10 @@ class HaruHanGajiApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 설정 서비스에서 테마 모드와 조부모 모드 읽기
+    // 리액티브 상태에서 테마 모드와 조부모 모드 읽기
     final settings = ref.watch(appSettingsServiceProvider);
-    final themeModeStr = settings.themeMode;
-    final isGrandparent = settings.isGrandparentMode;
+    final themeModeStr = ref.watch(themeModeProvider);
+    final isGrandparent = ref.watch(grandparentModeProvider);
 
     // 문자열 -> ThemeMode 변환
     final ThemeMode themeMode;

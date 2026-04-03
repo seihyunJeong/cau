@@ -26,6 +26,29 @@ final appSettingsServiceProvider = Provider<AppSettingsService>(
   ),
 );
 
+/// 테마 모드 리액티브 상태. 토글 시 즉시 UI 반영.
+class ThemeModeNotifier extends Notifier<String> {
+  @override
+  String build() => ref.read(appSettingsServiceProvider).themeMode;
+
+  void update(String mode) => state = mode;
+}
+
+final themeModeProvider =
+    NotifierProvider<ThemeModeNotifier, String>(ThemeModeNotifier.new);
+
+/// 조부모 모드 리액티브 상태. 토글 시 즉시 UI 반영.
+class GrandparentModeNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(appSettingsServiceProvider).isGrandparentMode;
+
+  void update(bool value) => state = value;
+}
+
+final grandparentModeProvider =
+    NotifierProvider<GrandparentModeNotifier, bool>(
+        GrandparentModeNotifier.new);
+
 /// BabyDao 인스턴스 Provider.
 final babyDaoProvider = Provider<BabyDao>((ref) => BabyDao());
 

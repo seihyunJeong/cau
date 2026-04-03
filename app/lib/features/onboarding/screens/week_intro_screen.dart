@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -12,10 +11,11 @@ import '../../../core/widgets/primary_cta_button.dart';
 import '../../../data/models/baby.dart';
 import '../../../data/seed/week_content_seed.dart';
 import '../../../providers/baby_providers.dart';
+import '../../../shared/widgets/confetti_animation.dart';
 
 /// 온보딩 화면 C: 주차 소개 화면.
 /// 개발기획서 5-1 화면 C 기준.
-/// Lottie 축하 애니메이션, 아기 이름 인사, 주차 정보 카드, "다음" 버튼.
+/// 축하 애니메이션, 아기 이름 인사, 주차 정보 카드, "다음" 버튼.
 class WeekIntroScreen extends ConsumerWidget {
   const WeekIntroScreen({super.key});
 
@@ -64,7 +64,7 @@ class WeekIntroScreen extends ConsumerWidget {
       child: Column(
         children: [
           const Spacer(flex: 1),
-          // -- Lottie 축하 애니메이션 --
+          // -- 축하 애니메이션 (CustomPainter 기반) --
           _buildLottieAnimation(isDark),
           const SizedBox(height: AppDimensions.lg),
           // -- 인사 텍스트 --
@@ -102,28 +102,19 @@ class WeekIntroScreen extends ConsumerWidget {
   }
 
   Widget _buildLottieAnimation(bool isDark) {
-    // Lottie 애니메이션을 시도하고, 실패 시 플레이스홀더 아이콘으로 대체
-    return SizedBox(
+    // CustomPainter 기반 ConfettiAnimation으로 Lottie placeholder를 대체.
+    return Container(
       width: 150,
       height: 150,
-      child: Lottie.asset(
-        'assets/lottie/celebration.json',
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkCard : AppColors.paleCream,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.celebration,
-              size: 64,
-              color: AppColors.warmOrange,
-            ),
-          );
-        },
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : AppColors.paleCream,
+        shape: BoxShape.circle,
+      ),
+      child: const ConfettiAnimation(
+        width: 150,
+        height: 150,
+        autoPlay: true,
+        duration: Duration(milliseconds: 2500),
       ),
     );
   }
@@ -139,7 +130,8 @@ class WeekIntroScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.low,
+        boxShadow: AppShadows.adaptiveLow(
+            theme.brightness == Brightness.dark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

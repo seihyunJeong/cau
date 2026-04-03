@@ -77,6 +77,7 @@ class _PrimaryCtaButtonState extends State<PrimaryCtaButton>
   @override
   Widget build(BuildContext context) {
     final isEnabled = widget.onPressed != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTapDown: _onTapDown,
@@ -89,7 +90,9 @@ class _PrimaryCtaButtonState extends State<PrimaryCtaButton>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.xl),
             boxShadow: isEnabled
-                ? (_isPressed ? AppShadows.subtle : AppShadows.medium)
+                ? (_isPressed
+                    ? AppShadows.adaptiveSubtle(isDark)
+                    : AppShadows.adaptiveMedium(isDark))
                 : null,
           ),
           child: ElevatedButton(

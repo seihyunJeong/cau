@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 
 /// Code-based confetti/sparkle celebration animation.
-/// Uses CustomPainter + AnimationController to render falling confetti particles.
+/// Uses CustomPainter + AnimationController to render rising and falling
+/// confetti particles with burst, drift, rotation and fade.
 /// Replaces the Lottie placeholder for celebration.json.
 class ConfettiAnimation extends StatefulWidget {
   final double width;
@@ -15,8 +16,8 @@ class ConfettiAnimation extends StatefulWidget {
 
   const ConfettiAnimation({
     super.key,
-    this.width = 150,
-    this.height = 150,
+    this.width = 180,
+    this.height = 180,
     this.autoPlay = true,
     this.duration = const Duration(milliseconds: 2500),
   });
@@ -30,7 +31,7 @@ class _ConfettiAnimationState extends State<ConfettiAnimation>
   late AnimationController _controller;
   late List<_ConfettiParticle> _particles;
 
-  static const _particleCount = 40;
+  static const _particleCount = 55;
 
   @override
   void initState() {
@@ -88,7 +89,11 @@ class _ConfettiParticle {
   final double wobble;
   final double wobbleSpeed;
   final double rotation;
-  final int shape; // 0=circle, 1=rect, 2=star
+  final double rotationSpeed;
+  final int shape; // 0=circle, 1=rect, 2=star, 3=ring
+  final double burstAngle; // Initial burst direction
+  final double burstSpeed; // How fast it bursts outward initially
+  final double delay; // Start delay (0..0.2)
 
   _ConfettiParticle({
     required this.startX,
@@ -99,7 +104,11 @@ class _ConfettiParticle {
     required this.wobble,
     required this.wobbleSpeed,
     required this.rotation,
+    required this.rotationSpeed,
     required this.shape,
+    required this.burstAngle,
+    required this.burstSpeed,
+    required this.delay,
   });
 
   factory _ConfettiParticle.random(math.Random rng) {
@@ -115,15 +124,19 @@ class _ConfettiParticle {
     ];
 
     return _ConfettiParticle(
-      startX: rng.nextDouble(),
-      startY: rng.nextDouble() * 0.3,
-      size: 4.0 + rng.nextDouble() * 6.0,
+      startX: 0.3 + rng.nextDouble() * 0.4, // Center cluster
+      startY: 0.3 + rng.nextDouble() * 0.2,
+      size: 3.0 + rng.nextDouble() * 7.0,
       color: colors[rng.nextInt(colors.length)],
-      speed: 0.5 + rng.nextDouble() * 1.0,
-      wobble: 0.02 + rng.nextDouble() * 0.08,
+      speed: 0.3 + rng.nextDouble() * 0.8,
+      wobble: 0.03 + rng.nextDouble() * 0.1,
       wobbleSpeed: 2 + rng.nextDouble() * 6,
       rotation: rng.nextDouble() * math.pi * 2,
-      shape: rng.nextInt(3),
+      rotationSpeed: 1 + rng.nextDouble() * 4,
+      shape: rng.nextInt(4),
+      burstAngle: rng.nextDouble() * math.pi * 2,
+      burstSpeed: 0.2 + rng.nextDouble() * 0.4,
+      delay: rng.nextDouble() * 0.15,
     );
   }
 }
@@ -139,24 +152,48 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Draw a soft central glow first
+    if (progress < 0.5) {
+      final glowOpacity = (1.0 - progress * 2).clamp(0.0, 0.3);
+      final glowPaint = Paint()
+        ..color = AppColors.softYellow.withValues(alpha: glowOpacity)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.2);
+      canvas.drawCircle(
+        Offset(size.width / 2, size.height / 2),
+        size.width * 0.15,
+        glowPaint,
+      );
+    }
+
     for (final p in particles) {
-      final delay = p.startY * 0.3;
       final adjustedProgress =
-          ((progress - delay) / (1.0 - delay)).clamp(0.0, 1.0);
+          ((progress - p.delay) / (1.0 - p.delay)).clamp(0.0, 1.0);
 
       if (adjustedProgress <= 0) continue;
+
+      // Burst phase (first 30%) then drift phase
+      final burstPhase = (adjustedProgress / 0.3).clamp(0.0, 1.0);
+      final driftPhase = ((adjustedProgress - 0.15) / 0.85).clamp(0.0, 1.0);
 
       // Fade out in last 30%
       final opacity = adjustedProgress > 0.7
           ? (1.0 - (adjustedProgress - 0.7) / 0.3)
-          : math.min(1.0, adjustedProgress * 5);
+          : math.min(1.0, adjustedProgress * 6);
+
+      // Position: burst outward then drift down with wobble
+      final burstX =
+          math.cos(p.burstAngle) * p.burstSpeed * burstPhase * size.width;
+      final burstY =
+          math.sin(p.burstAngle) * p.burstSpeed * burstPhase * size.height;
 
       final x = p.startX * size.width +
-          math.sin(adjustedProgress * p.wobbleSpeed * math.pi * 2) *
+          burstX +
+          math.sin(driftPhase * p.wobbleSpeed * math.pi * 2) *
               p.wobble *
               size.width;
       final y = p.startY * size.height +
-          adjustedProgress * p.speed * size.height * 0.8;
+          burstY +
+          driftPhase * p.speed * size.height * 0.6;
 
       final paint = Paint()
         ..color = p.color.withValues(alpha: opacity * 0.9)
@@ -164,25 +201,30 @@ class _ConfettiPainter extends CustomPainter {
 
       canvas.save();
       canvas.translate(x, y);
-      canvas.rotate(p.rotation + adjustedProgress * math.pi * 2 * p.speed);
+      canvas.rotate(
+          p.rotation + adjustedProgress * math.pi * 2 * p.rotationSpeed);
 
       switch (p.shape) {
-        case 0:
+        case 0: // Circle
           canvas.drawCircle(Offset.zero, p.size / 2, paint);
-        case 1:
+        case 1: // Rectangle (confetti strip)
           canvas.drawRRect(
             RRect.fromRectAndRadius(
               Rect.fromCenter(
                 center: Offset.zero,
                 width: p.size,
-                height: p.size * 0.6,
+                height: p.size * 0.45,
               ),
               const Radius.circular(1),
             ),
             paint,
           );
-        case 2:
+        case 2: // Star/sparkle
           _drawSparkle(canvas, Offset.zero, p.size / 2, paint);
+        case 3: // Ring
+          paint.style = PaintingStyle.stroke;
+          paint.strokeWidth = 1.5;
+          canvas.drawCircle(Offset.zero, p.size / 2.5, paint);
       }
 
       canvas.restore();

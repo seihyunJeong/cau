@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -49,11 +50,28 @@ class _MissionContent extends StatelessWidget {
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        // 히어로 카드: 더 큰 radius(lg=16) + 강한 그림자 + 그라데이션 배경
+        gradient: isDark
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.darkCardElevated,
+                  AppColors.darkCard,
+                ],
+              )
+            : LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.cardColor,
+                  AppColors.paleCream.withValues(alpha: 0.5),
+                ],
+              ),
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: isDark ? null : AppShadows.medium,
+        boxShadow: AppShadows.adaptiveMedium(isDark),
         border: isDark
-            ? Border.all(color: AppColors.darkBorder, width: 1)
+            ? Border.all(color: AppColors.darkBorder, width: 1.5)
             : Border.all(
                 color: accentColor.withValues(alpha: 0.15),
                 width: 1,
@@ -111,7 +129,7 @@ class _MissionContent extends StatelessWidget {
                   child: ElevatedButton.icon(
                     key: const ValueKey('mission_start_btn'),
                     onPressed: () {
-                      // TODO: 활동 상세 화면 네비게이션 (Sprint 05+)
+                      context.push('/activity/${activity.id}');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.warmOrange,
